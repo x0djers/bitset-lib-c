@@ -1,5 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g -std=c11 -DDEBUG
+ASAN_FLAGS = -fsanitize=address -g
 
 BUILD_DIR = build
 
@@ -38,6 +39,15 @@ $(TESTS_OBJ_DIR)%.o: $(TESTS_SRC_DIR)%.c
 
 test: $(TEST_EXEC)
 	./$(TEST_EXEC)
+
+asan: CFLAGS += $(ASAN_FLAGS)
+asan: $(TEST_EXEC)
+
+msan: CFLAGS += $(MSAN_FLAGS)
+msan: $(TEST_EXEC)
+
+valgrind: $(TEST_EXEC)
+	valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all ./$(TEST_EXEC)
 
 clean:
 	rm -rf $(BUILD_DIR)
